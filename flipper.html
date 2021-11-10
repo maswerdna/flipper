@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<title>FlipperCSS - A CSS Text Animation Module</title>
+	<link rel="stylesheet" type="text/css" href="css/prism.css">
+	<link rel="stylesheet" type="text/css" href="css/flipper.css">
+</head>
+<body>
+	<div id="github">
+	    <p>
+	    	<a href="https://github.com/maswerdna">GitHub</a>
+	    </p>
+	</div>
+	<div class="grid grid-15-5">
+		<div class="full-vh flex align-center column main">
+			<div id="intro">
+				<header id="header">
+					<h1 class="mb-2">flipper.css</h1>
+					<i>Text flipping animation with CSS</i>
+				</header>
+				<div class="flex">
+					<div class="outer-box p-8" id="flip-area">
+						<div class="__flip-container">
+							<span class="__flip-prefix">CSS is</span>
+							<span class="__flip-decorator">
+								<span class="__flip-sentences">
+									<span>an awesome</span>
+									<span>a great</span>
+									<span>a CPU friendly</span>
+									<span>a useful</span>
+									<span>a fantastic</span>
+								</span>
+							</span>
+							<div class="__flip-suffix">tool.</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="full mt-12">
+				<div class="grid grid-1-1">
+					<div id="css-area" class="code-area ov-auto"></div>
+					<div id="html-area" class="code-area ov-auto"></div>
+				</div>
+			</div>
+		</div>
+		<div class="sub p-24">
+			<div class="sub-inner">
+				<div class="bolder text-md">Edit</div>
+				<div class="p-12"></div>
+				<div class="bold">Enter the prefix</div>
+				<input type="text" name="prefix" class="p-8 border-2 mb-2 prefix" value="CSS is">
+				<div class="p-12"></div>
+				<div class="bold mb-2">Enter words to animate</div>
+				<div id="input-container">
+					<input type="text" name="words[]" class="p-8 border-2 mb-2 word block" value="a fantastic">
+					<input type="text" name="words[]" class="p-8 border-2 mb-2 word block" value="a useful">
+					<input type="text" name="words[]" class="p-8 border-2 mb-2 word block" value="a CPU friendly">
+					<input type="text" name="words[]" class="p-8 border-2 mb-2 word block" value="a great">
+					<input type="text" name="words[]" class="p-8 border-2 mb-2 word block" value="an awesome">
+				</div>
+				<button class="button bold p-8" id="add-button">Add more</button>
+				<div class="p-12"></div>
+				<div class="bold">Enter the suffix</div>
+				<input type="text" name="suffix" class="p-8 border-2 mb-2 suffix" value="tool.">
+				<div class="p-12"></div>
+				<div class="bold mb-2">Enter duration in seconds</div>
+				<input type="number" name="duration" class="p-8 border-2 mb-2 duration" value="15">
+				<div class="p-12"></div>
+				<button class="button bold p-8 light" id="create-button">Create</button>
+			</div>
+		</div>
+	</div>
+	<footer class="full p-12" style="background-color: #002b36; color: #93a1a1;">
+		<div class="flex bold justify-center">
+			Created with love by Samson Andrew
+		</div>
+	</footer>
+
+	<script type="text/javascript" src="js/prism.js"></script>
+	<script type="text/javascript">
+		// Style element to hold styles for results
+		const addStyle = (() => {
+			const style = document.createElement("style");
+			document.head.append(style);
+			return (styleString) => style.textContent = styleString;
+		})();
+let generalStyle = `.__flip-container {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	font-weight: bold;
+	text-align: left;
+	font-size: 2.5rem;
+	padding: 2rem;
+    background-color: #002b36;
+}
+.__flip-prefix {
+	margin-right: 1rem;
+}
+.__flip-suffix {
+	width: 100%;
+}
+.__flip-decorator {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    height: 54px;
+}
+.__flip-decorator span {
+    display: block;
+    margin-bottom: 47px;
+    height: 47px;
+    text-align: left;
+    white-space: nowrap;
+    color: #fff;
+}`;
+let animationStyle = `
+.__flip-sentences {
+    -webkit-animation: __flip__ 15s ease infinite;
+    animation: __flip__ 15s ease infinite;
+}
+@keyframes __flip__ {
+	0% {
+	    margin-top: -376px;
+	}
+	18% {
+	    margin-top: -376px;
+	}
+	20% {
+	    margin-top: -282px;
+	}
+	38% {
+	    margin-top: -282px;
+	}
+	40% {
+	    margin-top: -188px;
+	}
+	58% {
+	    margin-top: -188px;
+	}
+	60% {
+	    margin-top: -94px;
+	}
+	78% {
+	    margin-top: -94px;
+	}
+	80% {
+	    margin-top: 0;
+	}
+	99.5% {
+	    margin-top: 0;
+	}
+	100% {
+	    margin-top: -376px;
+	}
+}`;
+		addStyle(generalStyle + animationStyle);
+		//
+		// Add more word input *ONCLICK* of button
+		let button = document.querySelector("#add-button");
+		button.addEventListener("click", function() {
+			let c = document.querySelector("#input-container");
+			let input = document.createElement("DIV");
+			input.innerHTML = '<div class="word-container relative"><input type="text" name="words[]" class="p-8 border-2 mb-2 word"><span>remove</span></div>';
+			addCloseHandler(input.firstChild.querySelector("span"));
+			addPaintHandler(input.firstChild.querySelector("input"));
+ 			c.appendChild(input.firstChild);
+		});
+		// Remove unused word input
+		function addCloseHandler(elem) {
+			elem.addEventListener("click", function() {
+				elem.parentNode.parentNode.removeChild(elem.parentNode);
+			});
+		}
+		// Handler for removal of error decorations
+		function addPaintHandler(elem) {
+			elem.addEventListener("focus", function() {
+				elem.classList.remove("error");
+			});
+		}
+		let w = document.querySelectorAll("input.word");
+		for (let i = 0; i < w.length; i++) {
+			addPaintHandler(w[i]);
+		}
+		//
+		// Create text animation
+		let flip_area = document.querySelector("#flip-area");
+		let create = document.querySelector("#create-button");
+		create.addEventListener("click", function() {
+			let words = document.querySelectorAll("input.word");
+			let wordsArray = [];
+			for(let i = words.length - 1; i >= 0; i--) {
+				if (words[i].value)
+					wordsArray.push(words[i].value);
+				else
+					words[i].classList.add("error");
+			}
+			if (wordsArray.length < 2) {
+				return alert("Enter at least 2 words to animate");
+			}
+			//
+		// CSS *********************
+		let duration = document.querySelector("input.duration").value;
+		let totalWords = wordsArray.length;
+		let increment = Math.floor(100 / totalWords);
+		let snapPoint = 0.1 * increment;
+let string = `
+	0% {
+		margin-top: -${ 94 * (totalWords - 1) }px;
+	}`;
+for (let i = 1; i < totalWords; i++) {
+string += `
+	${i * increment - snapPoint}% {
+		margin-top: -${ 94 * (totalWords - i) }px;
+	}
+	${i * increment}% {
+		margin-top: -${ 94 * (totalWords - i - 1) }px;
+	}`;
+}
+string += `
+	99.5% {
+		margin-top: 0;
+	}
+	100% {
+		margin-top: -${ 94 * (totalWords - 1) }px;
+	}`;
+
+let style = `
+.__flip-sentences {
+	-webkit-animation: __flip__ ${duration}s ease infinite;
+    animation: __flip__ ${duration}s ease infinite;
+}
+@keyframes __flip__ {${string}
+}`;
+		//
+		addStyle(generalStyle + style);
+		// HTML *********************
+		let preWord = document.querySelector("input.prefix").value;
+		let sufWord = document.querySelector("input.suffix").value;
+		//
+let result = `<div class="__flip-container">
+	<span class="__flip-prefix">${preWord}</span>
+	<span class="__flip-decorator">
+		<span class="__flip-sentences">
+			${ wordsArray.map(word => "<span>"+ word +"</span>").join("\n\t\t\t") }
+		</span>
+	</span>
+	<div class="__flip-suffix">${sufWord}</div>
+</div>`;
+			// Show the created animation
+			flip_area.innerHTML = result;
+			let codeHTML = result.replace(/[<]/g, "&lt;");
+			document.querySelector("#html-area").innerHTML = `
+			<h3 class="p-8 m-0 ">HTML</h3>
+			<pre class="codebox"><span class="copy-button">COPY</span><code class="language-html">${codeHTML}</code></pre>`;
+			//
+			document.querySelector("#css-area").innerHTML = `
+			<h3 class="p-8 m-0 ">CSS</h3>
+			<pre class="codebox"><span class="copy-button">COPY</span><code class="language-css">${ generalStyle + style }</code></pre>`;
+			//
+			Prism.highlightAll();
+		});
+
+	document.querySelectorAll(".code-area").forEach(function(area) {
+		area.addEventListener("click", function(evt) {
+			if (evt.target.classList.contains("copy-button")) {
+				// Create a new textarea element
+				const textarea = document.createElement('textarea')
+				textarea.style.height = 0
+				// Now append it to your page somewhere, I chose <body>
+				document.body.appendChild(textarea)
+				// Give our textarea a value
+				textarea.value = area.querySelector("code").innerText
+				// Now the textarea value to clipboard
+				textarea.select()
+				document.execCommand('copy')
+				// Remove the textarea
+				document.body.removeChild(textarea)
+				alert("Code copied to clipboard.")
+			}
+		})
+	});
+	</script>
+</body>
+</html>
